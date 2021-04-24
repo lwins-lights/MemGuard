@@ -6,7 +6,7 @@ import configparser
 
 config = configparser.ConfigParser()
 config.read('config.ini')
-result_folder="../result/location/code_publish/"
+result_folder="./result/location/code_publish/"
 if not os.path.exists(result_folder):
     os.makedirs(result_folder)
 config["location"]["result_folder"]=result_folder

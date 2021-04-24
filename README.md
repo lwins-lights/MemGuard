@@ -1,6 +1,6 @@
 This repository contains code for "MemGuard: Defending against Black-Box Membership Inference Attacks via Adversarial Examples". 
 
-Required python tool (under Ubuntu 16.04): Python 2.7 (or 3.6), Keras (2.2.2), TensorFlow 1.8.0 (as we compute gradient, different backend may have different implementation, you maybe need to check the backend), numpy(1.13.3), argparse (1.1), scipy (1.2.0). GPU support (you can also comment related code if not using GPU). 
+Required python tool (under Ubuntu 16.04): Python 2.7 (or 3.6), Keras (2.2.2), TensorFlow 1.8.0 (as we compute gradient, different backend may have different implementation, you maybe need to check the backend), numpy(1.13.3/**1.14.1**), argparse (1.1), scipy (1.2.0). GPU support (you can also comment related code if not using GPU). 
 
 
 
