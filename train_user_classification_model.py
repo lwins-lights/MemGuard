@@ -1,6 +1,6 @@
 import numpy as np
 np.random.seed(1000)
-import imp 
+import imp
 import input_data_class
 import keras
 from keras.models import Model
@@ -11,11 +11,34 @@ import os
 import configparser
 import argparse
 
+def lr_schedule(epoch):
+    """Learning Rate Schedule
+
+    Learning rate is scheduled to be reduced after 80, 120, 160, 180 epochs.
+    Called automatically every epoch as part of callbacks during training.
+
+    # Arguments
+        epoch (int): The number of epochs
+
+    # Returns
+        lr (float32): learning rate
+    """
+    lr = 1e-3
+    if epoch > 180:
+        lr *= 0.5e-3
+    elif epoch > 160:
+        lr *= 1e-3
+    elif epoch > 120:
+        lr *= 1e-2
+    elif epoch > 80:
+        lr *= 1e-1
+    # print('Learning rate: ', lr)
+    return lr
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-dataset',default='location')
 args = parser.parse_args()
-dataset=args.dataset 
+dataset=args.dataset
 input_data=input_data_class.InputData(dataset=dataset)
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -51,7 +74,7 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 input_shape=x_train.shape[1:]
 
 model=fccnet.model_user(input_shape=input_shape,labels_dim=num_classes)
-model.compile(loss=keras.losses.categorical_crossentropy,optimizer=keras.optimizers.SGD(lr=0.01),metrics=['accuracy'])
+model.compile(loss=keras.losses.categorical_crossentropy,optimizer=keras.optimizers.Adam(lr=lr_schedule(0)),metrics=['accuracy'])
 model.summary()
 
 index_array=np.arange(x_train.shape[0])
@@ -61,19 +84,21 @@ for i in np.arange(user_epochs):
     for j in np.arange(batch_num):
         x_batch=x_train[index_array[(j%batch_num)*batch_size:min((j%batch_num+1)*batch_size,x_train.shape[0])],:]
         y_batch=y_train[index_array[(j%batch_num)*batch_size:min((j%batch_num+1)*batch_size,x_train.shape[0])],:]
-        model.train_on_batch(x_batch,y_batch)   
-    if (i+1)%150==0:
-        #decay the learning rate by 0.1 
-        K.set_value(model.optimizer.lr,K.eval(model.optimizer.lr*0.1))
-        print("Learning rate: {}".format(K.eval(model.optimizer.lr)))
-    if (i+1)%100==0:
+        model.train_on_batch(x_batch,y_batch)
+    #if (i+1)%150==0:
+        #decay the learning rate by 0.1
+    #    K.set_value(model.optimizer.lr,K.eval(model.optimizer.lr*0.1))
+    #    print("Learning rate: {}".format(K.eval(model.optimizer.lr)))
+    K.set_value(model.optimizer.lr, lr_schedule(i))
+    if (i+1)%5==0:
         print("Epochs: {}".format(i))
+        print("Learning rate: {}".format(K.eval(model.optimizer.lr)))
         scores_test = model.evaluate(x_test, y_test, verbose=0)
         print('Test loss:', scores_test[0])
-        print('Test accuracy:', scores_test[1])  
+        print('Test accuracy:', scores_test[1])
         scores_train = model.evaluate(x_train, y_train, verbose=0)
         print('Train loss:', scores_train[0])
-        print('Train accuracy:', scores_train[1])  
+        print('Train accuracy:', scores_train[1])
 
 ##save the model
 if save_model:
