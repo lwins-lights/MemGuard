@@ -1,5 +1,6 @@
 __pycache__/
 *.txt
 result/
+test/
 *.pyc
 
