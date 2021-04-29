@@ -18,7 +18,7 @@ parser.add_argument('-scenario',default='full')
 parser.add_argument('-adv',default='adv1')
 parser.add_argument('-version',default='v0')
 args = parser.parse_args()
-dataset=args.dataset 
+dataset=args.dataset
 input_data=input_data_class.InputData(dataset=dataset)
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -110,7 +110,7 @@ for i in np.arange(epochs):
     for j in np.arange(batch_num):
         b_batch=b_train[index_array[(j%batch_num)*batch_size:min((j%batch_num+1)*batch_size,b_train.shape[0])],:]
         y_batch=label_train[index_array[(j%batch_num)*batch_size:min((j%batch_num+1)*batch_size,label_train.shape[0])]]
-        model.train_on_batch(b_batch,y_batch)   
+        model.train_on_batch(b_batch,y_batch)
 
     if (i+1)%300==0:
         K.set_value(model.optimizer.lr,K.eval(model.optimizer.lr*0.1))
@@ -119,13 +119,13 @@ for i in np.arange(epochs):
         print("Epochs: {}".format(i))
         scores_test_defense = model.evaluate(b_test, label_test, verbose=0)
         print('Test loss defense:', scores_test_defense[0])
-        print('Test accuracy defense:', scores_test_defense[1])  
+        print('Test accuracy defense:', scores_test_defense[1])
         scores_test_nodefense = model.evaluate(b_test_origin, label_test, verbose=0)
         print('Test loss no defense:', scores_test_nodefense[0])
-        print('Test accuracy no defense:', scores_test_nodefense[1])  
+        print('Test accuracy no defense:', scores_test_nodefense[1])
         scores_train = model.evaluate(b_train, label_train, verbose=0)
         print('Train loss:', scores_train[0])
-        print('Train accuracy:', scores_train[1])  
+        print('Train accuracy:', scores_train[1])
 
 result_filepath=result_folder+"/"+config[dataset]["result_file_publish"]
 
@@ -153,15 +153,15 @@ if args.scenario=='full':
 else:
     raise NotImplementedError
 
-epsilon_value_list=["1.0","0.7","0.5","0.3","0.1","0.0"]
+epsilon_value_list=["1.0","0.3","0.1","0.03","0.01","0.008", "0.006", "0.004", "0.002", "0.001", "0.0003", "0.0001", "0"]
 epsilon_value_list=[float(t) for t in epsilon_value_list]
 
 inference_accuracy_list=[]
 
-for epsilon_value in epsilon_value_list: 
+for epsilon_value in epsilon_value_list:
     inference_accuracy=0.0
 
-    np.random.seed(100)  
+    np.random.seed(100)
     for i in np.arange(f_evaluate_origin.shape[0]):
         distortion_noise=np.sum(np.abs(f_evaluate_origin[i,:]-f_evaluate_noise[i,:]))
         p_value=0.0
@@ -176,6 +176,10 @@ for epsilon_value in epsilon_value_list:
             inference_accuracy+=p_value
     inference_accuracy_list.append(inference_accuracy/(float(f_evaluate_origin.shape[0])))
 
+total_dn = 0
+for i in np.arange(f_evaluate_origin.shape[0]):
+    total_dn += np.sum(np.abs(f_evaluate_origin[i,:]-f_evaluate_noise[i,:]))
+print("Average distortion noise: {}".format(total_dn / f_evaluate_origin.shape[0]))
 
 print("Budget list: {}".format(epsilon_value_list))
-print("inference accuracy list: {}".format(inference_accuracy_list))       
+print("inference accuracy list: {}".format(inference_accuracy_list))
