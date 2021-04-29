@@ -1,6 +1,10 @@
 __pycache__/
 *.txt
-result/
+!result/cifar10/code_publish/attack/noise_data_evaluation.npz
+*.npz
+*.bak
 test/
 *.pyc
+data/cifar10/data_complete.npz
+
 
