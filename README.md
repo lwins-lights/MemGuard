@@ -1,3 +1,11 @@
+# Metadata (irrelevant to sections below)
+```
+Target model accuracy: ~64%
+Average distortion noise: 0.0806152777034
+Budget list: [1.0, 0.3, 0.1, 0.03, 0.01, 0.008, 0.006, 0.004, 0.002, 0.001, 0.0003, 0.0001, 0.0]
+inference accuracy list: [0.47515, 0.47870759045188443, 0.4834086213757181, 0.4886519501360669, 0.5115115820127515, 0.5615722318368542, 0.6064462018917739, 0.6477367535851004, 0.6856217472081731, 0.7036523201931545, 0.7160406960579451, 0.7195802320193163, 0.72135]
+```
+
 # Data
 * run `python data/cifar10/get_data.py` to download the `data_complete.npz` file into the folder `data/cifar10/`.
 * other two important data files are `data/cifar10/shuffle_index.npz` and `result/cifar10/code_publish/attack/noise_data_evaluation.npz`.
